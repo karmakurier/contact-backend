@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var pjson = require('../package.json');
 var svgCaptcha = require('svg-captcha');
+var session = require('express-session')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -20,7 +21,6 @@ router.post('/contact', (req, res, next) => {
 
   var captcha = req.body.captcha;
   if (captcha == req.session.captcha) {
-    // Instantiate the SMTP server
     const smtpTrans = nodemailer.createTransport({
       host: process.env.smtp_host,
       port: process.env.smtp_port,
@@ -31,9 +31,8 @@ router.post('/contact', (req, res, next) => {
       }
     })
 
-    // Specify what the email will look like
     const mailOpts = {
-      from: 'info@karmakurier.org', // This is ignored by Gmail
+      from: 'info@karmakurier.org',
       to: 'info@karmakurier.org',
       subject: 'Neue Kontaktanfrage via Landingpage!',
       text: `
@@ -43,7 +42,6 @@ router.post('/contact', (req, res, next) => {
   ${req.body.message}`
     }
 
-    // Attempt to send the email
     smtpTrans.sendMail(mailOpts, (error, response) => {
       if (error) {
         res.statusCode(500).send();
@@ -53,6 +51,8 @@ router.post('/contact', (req, res, next) => {
       }
     })
   } else {
+    // destroy session so no bruteforce is possible.
+    req.session.destroy();
     res.statusCode(400).send();
   }
 

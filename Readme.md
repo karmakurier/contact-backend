@@ -10,6 +10,7 @@ export smtp_host=your.host
 export smtp_port=465
 export smtp_user=your.user
 export smtp_password=your.pw
+export session_secret=verysecretsessionkey
 ```
 When this is done, you can run the application like so:
 
@@ -31,8 +32,9 @@ To use the contact form, the frontend page has to implement the following.
     "message":"The body of the contact message",
     "captcha":"solved captcha, to be checked by the backend"
 }
+```
 
-* after submission, the server will check the provided captcha for validity.
+* after submission, the server will check the provided captcha for validity. If the captcha is wrong, the frontend must receive a new image as the session will be destroyed!
 
 ### Example React-JS
 
