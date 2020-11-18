@@ -10,6 +10,7 @@ export smtp_host=your.host
 export smtp_port=465
 export smtp_user=your.user
 export smtp_password=your.pw
+export target_mail=receiverOfContactMails
 export session_secret=verysecretsessionkey
 ```
 When this is done, you can run the application like so:

@@ -32,8 +32,8 @@ router.post('/contact', (req, res, next) => {
     })
 
     const mailOpts = {
-      from: 'info@karmakurier.org',
-      to: 'info@karmakurier.org',
+      from: process.env.target_mail,
+      to: process.env.target_mail,
       subject: 'Neue Kontaktanfrage via Landingpage!',
       text: `
   Name: ${req.body.name}
