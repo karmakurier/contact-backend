@@ -6,7 +6,7 @@ var session = require('express-session')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.render({ version: pjson.version });
+  res.send({ version: pjson.version });
 });
 
 router.get('/captcha', function (req, res, next) {
@@ -53,7 +53,7 @@ router.post('/contact', (req, res, next) => {
   } else {
     // destroy session so no bruteforce is possible.
     req.session.destroy();
-    res.statusCode(400).send();
+    res.statusCode(400).send({message: 'wrong captcha'});
   }
 
 });
