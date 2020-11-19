@@ -2,7 +2,9 @@ var express = require('express');
 var router = express.Router();
 var pjson = require('../package.json');
 var svgCaptcha = require('svg-captcha');
-var session = require('express-session')
+var nodemailer = require('nodemailer');
+
+const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -11,16 +13,18 @@ router.get('/', function (req, res, next) {
 
 router.get('/captcha', function (req, res, next) {
   var captcha = svgCaptcha.create();
-  req.session.captcha = captcha.text;
+  var session = req.session;
+  session.captcha = captcha.text;
 
   res.type('svg');
   res.status(200).send(captcha.data);
 });
 
 router.post('/contact', (req, res, next) => {
-
   var captcha = req.body.captcha;
-  if (captcha == req.session.captcha) {
+
+  
+  if (captcha == req.session.captcha && emailRegexp.test(req.body.email)) {
     const smtpTrans = nodemailer.createTransport({
       host: process.env.smtp_host,
       port: process.env.smtp_port,
@@ -34,7 +38,7 @@ router.post('/contact', (req, res, next) => {
     const mailOpts = {
       from: process.env.target_mail,
       to: process.env.target_mail,
-      subject: 'Neue Kontaktanfrage via Landingpage!',
+      subject: 'Neue Kontaktanfrage via karmakurier Website',
       text: `
   Name: ${req.body.name}
   E-Mail: (${req.body.email})
@@ -43,17 +47,19 @@ router.post('/contact', (req, res, next) => {
     }
 
     smtpTrans.sendMail(mailOpts, (error, response) => {
+      //always destroy the session!
+      req.session.destroy();
       if (error) {
-        res.statusCode(500).send();
+        res.status(500).send();
       }
       else {
-        res.statusCode(204).send();
+        res.status(204).send();
       }
     })
   } else {
     // destroy session so no bruteforce is possible.
     req.session.destroy();
-    res.statusCode(400).send({message: 'wrong captcha'});
+    res.status(400).send({message: 'wrong captcha or invalid body'});
   }
 
 });
