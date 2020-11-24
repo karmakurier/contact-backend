@@ -12,7 +12,18 @@ export smtp_user=your.user
 export smtp_password=your.pw
 export target_mail=receiverOfContactMails
 export session_secret=verysecretsessionkey
+export allowedOrigin=http://localhost:3000 # this is the cors origin, typically the website of karmakurier frontend
 ```
+
+Next, configure cors. To allow multiple domains to be configured, an `cors.json` files has to be created at the project root. 
+It should look something like this:
+
+```json
+{
+    "allowed":["http://localhost:3000"]
+}
+```
+
 When this is done, you can run the application like so:
 
 ```bash
@@ -36,8 +47,3 @@ To use the contact form, the frontend page has to implement the following.
 ```
 
 * after submission, the server will check the provided captcha for validity. If the captcha is wrong, the frontend must receive a new image as the session will be destroyed!
-
-### Example React-JS
-
-For a react example, please have a look at the examples directory.
-TBD

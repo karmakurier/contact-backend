@@ -4,14 +4,26 @@ var cors = require('cors')
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
+var fs = require('fs');
+
 
 var indexRouter = require('./routes/index');
 
+var allowedOrigins = JSON.parse(fs.readFileSync('./cors.json')).allowed;
 var app = express();
-app.use(cors({
+
+var corsOptions = {
   credentials: true,
-  origin: process.env.allowedOrigin
-}))
+  origin: function (origin, callback) {
+    if ((allowedOrigins.indexOf(origin) !== -1) || !origin){
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
+app.use(cors(corsOptions))
 
 app.use(cookieParser(process.env.session_secret));
 app.use(session({secret: process.env.session_secret,  resave: false, saveUninitialized: true}));
