@@ -34,8 +34,8 @@ npm start
 ## Usage
 To use the contact form, the frontend page has to implement the following.
 
-* import a svg-captcha at the contact-form. Use the `/captcha` endpoint to get a generated svg and embed it in the form.
-* the enpoint `/contact` expects the following json payload:
+* import a svg-captcha at the contact-form. Use the `/contactapi-captcha` endpoint to get a generated svg and embed it in the form.
+* the enpoint `/contactapi-contact` expects the following json payload:
 
 ```json
 {
