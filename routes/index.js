@@ -11,7 +11,7 @@ router.get('/', function (req, res, next) {
   res.send({ version: pjson.version });
 });
 
-router.get('/captcha', function (req, res, next) {
+router.get('/contactapi-captcha', function (req, res, next) {
   var captcha = svgCaptcha.create();
   var session = req.session;
   session.captcha = captcha.text;
@@ -20,7 +20,7 @@ router.get('/captcha', function (req, res, next) {
   res.status(200).send(captcha.data);
 });
 
-router.post('/contact', (req, res, next) => {
+router.post('/contactapi-contact', (req, res, next) => {
   var captcha = req.body.captcha;
 
   
